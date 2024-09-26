@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, session
+from werkzeug.security import check_password_hash
+
 from prix_goncourt.dao import BookDAO, MembersDAO
-from prix_goncourt.models import President, Jury
-from prix_goncourt.models.member import Member
+
 
 
 main = Blueprint('main', __name__)
@@ -19,32 +20,31 @@ def home():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.form
-        name = data.get('name')
-        password = data.get('password')
+        username = request.form['username']
+        password = request.form['password']
 
-        member_data = members_dao.get_member_by_name(name)
-        if member_data and member_data['password'] == password:
 
-            if member_data['role'] == 'president':
-                member = President(member_data['name'], member_data['password'], member_data['id_member'])
-            elif member_data['role'] == 'jury':
-                member = Jury(member_data['name'], member_data['password'], member_data['id_member'])
-            elif member_data['role'] == 'public':
-                member = Member(member_data['name'], member_data['password'], member_data['id_member'])
+        members_dao = MembersDAO()
+
+
+        member = members_dao.get_member_by_name(username)
+
+
+        if member and member['password'] == password:
+
+            session['user_id'] = member['id_member']
+            session['role'] = member['role']
+
+            if member['role'] == 'president':
+                return redirect(url_for('main.president_menu'))
+            elif member['role'] == 'jury':
+                return redirect(url_for('main.jury_menu'))
             else:
-                return jsonify({'message': 'Role inconnu'}), 400
-
-            session['member_id'] = member.id_member
-            session['role'] = member_data['role']
-            flash(f"Bienvenue {member.name}", 'success')
-            return redirect(url_for('main.dashboard'))
+                return redirect(url_for('main.public_menu'))
         else:
-            flash('Identifiants incorrects', 'error')
+            flash('Identifiants incorrects')
 
     return render_template('login.html')
-
-# Route pour le tableau de bord
 @main.route('/dashboard')
 def dashboard():
     if 'member_id' not in session:
@@ -90,3 +90,66 @@ def logout():
     flash('Vous êtes déconnecté.', 'success')
     return redirect(url_for('main.login'))
 
+
+@main.route('/result_vote', methods=['GET'])
+def result_vote():
+    if 'role' not in session or session['role'] != 'president':
+        return "Accès refusé", 403
+
+
+    selection_number = request.args.get('selection_number', default=1, type=int)
+
+
+    book_dao = BookDAO()
+    vote_results = book_dao.get_vote_results_for_president(selection_number)
+
+
+    return render_template('result_vote.html', vote_results=vote_results, selection_number=selection_number)
+
+
+@main.route('/add_books_to_selection', methods=['GET', 'POST'])
+def add_books_to_selection():
+    if 'role' not in session or session['role'] != 'president':
+        return "Accès refusé", 403
+
+    book_dao = BookDAO()
+
+    if request.method == 'POST':
+
+        selection_number = request.form.get('selection_number')
+        book_ids = request.form.getlist('book_ids')
+
+
+        if selection_number and book_ids:
+            book_dao.add_books_to_selection(selection_number, book_ids)
+            flash('Les livres ont été ajoutés à la sélection avec succès.')
+            return redirect(url_for('main.add_books_to_selection'))
+        else:
+            flash('Veuillez sélectionner une phase et au moins un livre.')
+
+
+    all_books = book_dao.fetch_all_books()
+
+    return render_template('add_selection.html', books=all_books)
+
+@main.route('/vote', methods=['GET', 'POST'])
+def vote():
+    if 'role' not in session or session['role'] != 'jury':
+        return "Accès refusé", 403
+
+    selection_number = request.args.get('selection_number', default=1, type=int)
+    book_dao = BookDAO()
+
+    # Si la méthode est POST, cela signifie que le jury a soumis son vote
+    if request.method == 'POST':
+        book_ids = request.form.getlist('book_ids')  # Liste des IDs des livres choisis
+        if book_ids:
+            # Appeler la méthode pour enregistrer les votes
+            for book_id in book_ids:
+                book_dao.add_vote(selection_number, book_id, session['user_id'])  # Utiliser l'ID de l'utilisateur de session
+            flash('Vos votes ont été enregistrés avec succès.')
+            return redirect(url_for('main.jury_menu'))
+
+    # Si la méthode est GET, afficher les livres de la sélection
+    books = book_dao.get_books_by_selection(selection_number)
+    return render_template('jury_vote.html', books=books, selection_number=selection_number)

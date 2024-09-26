@@ -2,9 +2,13 @@
 
 {% block content %}
 <h2>Menu Président</h2>
+<h2>Bienvenu Didier Decoin</h2>
 <ul>
-    <li><a href="{{ url_for('main.get_books') }}">Ajouter des livres à la sélection</a></li>
-    <li><a href="{{ url_for('display_vote_results') }}">Afficher les résultats des votes</a></li>
-    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+    <li><a href="{{ url_for('main.get_books') }}">Afficher des livres à la sélection</a></li>
+    <li><a href="{{ url_for('main.result_vote', selection_number=1) }}">Afficher les Résultats  de votes de la Sélection 1</a></li>
+     <li><a href="{{ url_for('main.add_books_to_selection') }}">Ajouter des livres à la sélection</a></li>
+    <li><a href="{{ url_for('main.logout') }}">Déconnexion</a></li>
+
+
 </ul>
 {% endblock %}
