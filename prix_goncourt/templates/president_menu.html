@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Menu Président</h2>
+<ul>
+    <li><a href="{{ url_for('add_books') }}">Ajouter des livres à la sélection</a></li>
+    <li><a href="{{ url_for('display_vote_results') }}">Afficher les résultats des votes</a></li>
+    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+</ul>
+{% endblock %}

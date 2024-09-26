@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Menu Jury</h2>
+<ul>
+    <li><a href="{{ url_for('display_books') }}">Afficher les livres</a></li>
+    <li><a href="{{ url_for('vote') }}">Voter pour un livre</a></li>
+    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+</ul>
+{% endblock %}

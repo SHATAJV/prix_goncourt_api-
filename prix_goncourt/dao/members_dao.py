@@ -1,5 +1,7 @@
 import pymysql
-from dao.connection import get_db_connection
+
+from prix_goncourt.dao.connection import get_db_connection
+
 
 class MembersDAO:
     """

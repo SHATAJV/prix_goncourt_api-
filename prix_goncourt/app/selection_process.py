@@ -31,7 +31,7 @@ def add_votes_for_selection(book_dao, member, selection_number, book_ids):
     total_votes = 0
     valid_book_ids = []
 
-    # Retrieve available books for the selection phase
+
     available_books = book_dao.get_books_by_selection(selection_number)
     available_book_ids = {book['id_book'] for book in available_books}
 

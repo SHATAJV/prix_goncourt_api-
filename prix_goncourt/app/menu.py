@@ -1,9 +1,5 @@
-from dao.book_dao import BookDAO
-from dao.members_dao import MembersDAO
-from models.jury import Jury
-from models.president import President
-from models.member import Member
-from selection_process import add_votes_for_selection
+from prix_goncourt.app.selection_process import add_votes_for_selection
+from prix_goncourt.models import President, Jury
 
 
 def display_books_for_selection(self, selection_number):

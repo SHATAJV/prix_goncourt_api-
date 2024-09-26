@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Livres Disponibles</h2>
+<ul>
+    {% for book in books %}
+        <li>ID: {{ book.id_book }}, Titre: {{ book.title }}, Auteur: {{ book.author }}</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('back_to_menu') }}">Retour au menu</a>
+{% endblock %}
