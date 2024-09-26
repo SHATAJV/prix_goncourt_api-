@@ -1,4 +1,4 @@
-from dao import BookDAO
+
 
 
 def get_votes_from_jury(jury, selection_number):

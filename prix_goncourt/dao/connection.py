@@ -1,32 +1,24 @@
-# dao/connection.py
-
-import pymysql.cursors
-from pymysql import MySQLError
-
+import mysql.connector
+from flask import current_app, g
 
 def get_db_connection():
     """
-    Establishes a connection to the MySQL database.
-
-    This function attempts to connect to the MySQL database using the specified
-    parameters (host, user, password, database). If the connection is successful,
-    it returns the connection object. If there is an error during the connection,
-    it prints an error message and returns None.
-
-    Returns:
-        connection: A connection object for interacting with the database,
-                    or None if the connection fails.
+    Returns the MySQL database connection object.
+    Creates a new connection if it doesn't already exist in Flask's g context.
     """
-    try:
-        connection = pymysql.connect(
-            host='localhost',
-            user='root',
-            password='1234shtaj',
-            database='prix_goncourt',
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
+    if 'db' not in g:
+        g.db = mysql.connector.connect(
+            host=current_app.config['DB_HOST'],
+            user=current_app.config['DB_USER'],
+            password=current_app.config['DB_PASSWORD'],
+            database=current_app.config['DB_NAME']
         )
-        return connection
-    except pymysql.MySQLError as e:
-        print(f"Error connecting to MySQL Platform: {e}")
-        return None
+    return g.db
+
+def close_db_connection(e=None):
+    """
+    Close the database connection at the end of the request.
+    """
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()

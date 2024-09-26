@@ -1,6 +1,7 @@
-from dao.connection import get_db_connection
-import pymysql
+
 import pymysql.cursors
+
+from prix_goncourt.dao.connection import get_db_connection
 
 
 class BookDAO:
@@ -59,7 +60,12 @@ class BookDAO:
         return self.fetch_books_for_selection(previous_selection_number)
 
     def fetch_all_books(self):
-        """Fetch all books from the database."""
+        """
+        Fetch all books from the database.
+
+        Returns:
+            list: List of all books with their details.
+        """
         connection = get_db_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         query = """
@@ -74,7 +80,8 @@ class BookDAO:
         return books
 
     def fetch_books_for_selection(self, selection_number):
-        """Fetch books linked to a specific selection.
+        """
+        Fetch books linked to a specific selection.
 
         Args:
             selection_number (int): The selection phase number.
@@ -113,14 +120,9 @@ class BookDAO:
         cursor.execute(query, (selection_number,))
         result = cursor.fetchone()
 
-
-        if result:
-            print(f"Max votes for selection {selection_number}: {result['max_votes']}")
-        else:
-            print(f"No max_votes found for selection {selection_number}.")
-
         cursor.close()
         connection.close()
+
         return result['max_votes'] if result else 0
 
     def get_current_votes_for_jury(self, jury_id, selection_number):
@@ -239,13 +241,7 @@ class BookDAO:
         cursor.close()
         connection.close()
 
-        # Log the SQL result for debugging
-        print(f"Query result for selection {selection_id}, book {book_id}: {result}")
-
-        # Check if result is valid before accessing the key
-        if result is None or result['total_votes'] is None:
-            return 0  # Return 0 if no votes are found
-        return result['total_votes']
+        return result['total_votes'] if result and result['total_votes'] is not None else 0
 
     def get_book_by_id(self, book_id):
         """
@@ -268,19 +264,3 @@ class BookDAO:
         cursor.close()
         connection.close()
         return result if result else None
-
-    def get_all_juries(self):
-        """
-        Fetch all jury members from the database.
-
-        Returns:
-            list: List of jury members.
-        """
-        connection = get_db_connection()
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-        query = "SELECT id_member, name FROM members WHERE role = 'jury'"
-        cursor.execute(query)
-        juries = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return juries
