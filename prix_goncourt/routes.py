@@ -75,11 +75,12 @@ def public_menu():
     return render_template('public_menu.html')
 
 
-@main.route('/books', methods=['GET'])
+
+@main.route('/display_books', methods=['GET'])
 def get_books():
     selection_number = request.args.get('selection', default=1, type=int)
     books = book_dao.get_books_by_selection(selection_number)
-    return jsonify(books)
+    return render_template('display_books.html', books=books, selection_number=selection_number)
 
 
 @main.route('/logout')

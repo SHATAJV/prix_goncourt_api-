@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Prix Goncourt</title>
 </head>
 <body>
@@ -15,6 +15,7 @@
                 <li><a href="{{ url_for('main.public_menu') }}">Menu Public</a></li>
                 <li><a href="{{ url_for('main.jury_menu') }}">Menu Jury</a></li>
                 <li><a href="{{ url_for('main.president_menu') }}">Menu Président</a></li>
+                <li><a href="{{ url_for('main.get_books') }}">Afficher les Livres</a></li>
             </ul>
         </nav>
     </header>

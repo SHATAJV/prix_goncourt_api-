@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Menu Public</h2>
 <ul>
-    <li><a href="{{ url_for('display_books') }}">Afficher les livres d'une sélection</a></li>
-    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+    <li><a href="{{ url_for('main.display_books') }}">Afficher les livres d'une sélection</a></li>
+    <li><a href="{{ url_for('main.logout') }}">Déconnexion</a></li>
 </ul>
 {% endblock %}
