@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Prix Goncourt API
+  version: 1.0.0
+paths:
+  /api/books:
+    get:
+      summary: Obtenir tous les livres
+      responses:
+        '200':
+          description: Liste de tous les livres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id_book:
+                      type: integer
+                    title:
+                      type: string
+                    author:
+                      type: string
+  /api/books/{id}:
+    get:
+      summary: Obtenir un livre par ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Détails d'un livre
+  /api/selection/{no_selection}:
+    get:
+      summary: Livres d'une sélection
+      parameters:
+        - in: path
+          name: no_selection
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Liste des livres pour une sélection
+    post:
+      summary: Ajouter des livres à une sélection
+      parameters:
+        - in: path
+          name: no_selection
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                book_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '201':
+          description: Livres ajoutés à la sélection
