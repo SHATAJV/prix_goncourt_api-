@@ -6,7 +6,7 @@ from .dao import BookDAO, MembersDAO
 
 main = Blueprint('main', __name__)
 
-# DAO instances
+
 members_dao = MembersDAO()
 book_dao = BookDAO()
 

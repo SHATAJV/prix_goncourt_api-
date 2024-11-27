@@ -1,15 +1,15 @@
 from flask import Blueprint, jsonify, request, abort
-from prix_goncourt.dao import BookDAO  # Assurez-vous que ce chemin est correct
+from prix_goncourt.dao import BookDAO
 from flask_swagger_ui import get_swaggerui_blueprint
 
-# Initialisation du Blueprint
+# Initialize the Blueprint
 api = Blueprint('api', __name__)
 
-# Chemin pour Swagger
-SWAGGER_URL = '/api/docs'  # URL où Swagger sera servi
-API_URL = '/static/swagger.yaml'  # Chemin vers votre fichier swagger.yaml
+# Swagger setup
+SWAGGER_URL = '/api/docs'
+API_URL = 'swagger.yaml'
 
-# Initialisation de Swagger UI
+# Swagger UI initialization
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
@@ -18,16 +18,34 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     }
 )
 
-# DAO pour interagir avec les données des livres
+# DAO for book data interaction
 book_dao = BookDAO()
 
-# Routes de l'API
 @api.route('/api', methods=['GET'])
 def api_root():
-    return jsonify({"message": "Bienvenue dans l'API Prix Goncourt"}), 200
+    """
+    Root endpoint for the API.
+
+    **Description:**
+    Returns a welcome message to confirm that the API is accessible.
+
+    **Response:**
+    - 200: Success with a JSON welcome message.
+    """
+    return jsonify({"message": "Welcome to the Prix Goncourt API"}), 200
 
 @api.route('/api/books', methods=['GET'])
 def get_books():
+    """
+    Retrieve all books.
+
+    **Description:**
+    Fetches a list of all books participating in the Prix Goncourt.
+
+    **Response:**
+    - 200: Success with a JSON array of books.
+    - 500: Internal server error if the operation fails.
+    """
     try:
         books = book_dao.fetch_all_books()
         return jsonify(books), 200
@@ -36,29 +54,67 @@ def get_books():
 
 @api.route('/api/books/<int:id>', methods=['GET'])
 def get_book_by_id(id):
-    """Récupérer un livre par son ID"""
+    """
+    Retrieve a book by its ID.
+
+    **Description:**
+    Fetches a book's details using its unique ID.
+
+    **Parameters:**
+    - `id` (int): The unique identifier of the book.
+
+    **Response:**
+    - 200: Success with a JSON object of the book details.
+    - 404: Book not found.
+    - 500: Internal server error if the operation fails.
+    """
     try:
         book = book_dao.get_book_by_id(id)
         if not book:
-            abort(404, description="Livre non trouvé")
+            abort(404, description="Book not found")
         return jsonify(book), 200
     except Exception as e:
         abort(500, description=str(e))
 
 @api.route('/api/books/<slug_titre>', methods=['GET'])
 def get_book_by_slug(slug_titre):
-    """Récupérer un livre par son slug (titre unique)"""
+    """
+    Retrieve a book by its slug title.
+
+    **Description:**
+    Fetches a book's details using its slug (a unique title identifier).
+
+    **Parameters:**
+    - `slug_titre` (str): The slug of the book's title.
+
+    **Response:**
+    - 200: Success with a JSON object of the book details.
+    - 404: Book not found.
+    - 500: Internal server error if the operation fails.
+    """
     try:
         book = book_dao.get_book_by_slug(slug_titre)
         if not book:
-            abort(404, description="Livre non trouvé")
+            abort(404, description="Book not found")
         return jsonify(book), 200
     except Exception as e:
         abort(500, description=str(e))
 
 @api.route('/api/selection/<int:no_selection>', methods=['GET'])
 def get_selection(no_selection):
-    """Récupérer les livres d'une sélection donnée"""
+    """
+    Retrieve books from a specific selection.
+
+    **Description:**
+    Fetches all books from a given selection by its unique number.
+
+    **Parameters:**
+    - `no_selection` (int): The unique number identifying the selection.
+
+    **Response:**
+    - 200: Success with a JSON object containing the selection and its books.
+    - 500: Internal server error if the operation fails.
+    """
     try:
         books = book_dao.get_books_by_selection(no_selection)
         return jsonify({"selection": no_selection, "books": books}), 200
@@ -67,23 +123,38 @@ def get_selection(no_selection):
 
 @api.route('/api/selection/<int:no_selection>', methods=['POST'])
 def add_to_selection(no_selection):
-    """Ajouter des livres à une sélection donnée"""
+    """
+    Add books to a specific selection.
+
+    **Description:**
+    Adds a list of book IDs to the specified selection.
+
+    **Parameters:**
+    - `no_selection` (int): The unique number identifying the selection.
+    - JSON body containing:
+      - `book_ids` (list[int]): A list of book IDs to add to the selection.
+
+    **Response:**
+    - 201: Success with a confirmation message.
+    - 400: Invalid request (e.g., missing or incorrect data).
+    - 500: Internal server error if the operation fails.
+    """
     try:
         data = request.get_json()
 
-        # Validation : s'assurer que 'book_ids' est une liste d'entiers
+        # Validate the request body
         if not data or "book_ids" not in data or not isinstance(data["book_ids"], list):
-            abort(400, description="Requête invalide, 'book_ids' requis sous forme de liste")
+            abort(400, description="Invalid request, 'book_ids' is required as a list")
 
         book_ids = data["book_ids"]
 
-        # Valider que tous les éléments de book_ids sont des entiers
+        # Ensure all book IDs are integers
         if not all(isinstance(book_id, int) for book_id in book_ids):
-            abort(400, description="Tous les identifiants de livres doivent être des entiers")
+            abort(400, description="All book IDs must be integers")
 
-        # Ajouter les livres à la sélection
+        # Add books to the selection
         book_dao.add_books_to_selection(no_selection, book_ids)
-        return jsonify({"message": "Livres ajoutés avec succès", "selection": no_selection}), 201
+        return jsonify({"message": "Books successfully added", "selection": no_selection}), 201
 
     except Exception as e:
         abort(500, description=str(e))
