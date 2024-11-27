@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, session
 from werkzeug.security import check_password_hash
 
-from prix_goncourt.dao import BookDAO, MembersDAO
-
+from .dao import BookDAO, MembersDAO
 
 
 main = Blueprint('main', __name__)
@@ -14,7 +13,7 @@ book_dao = BookDAO()
 
 @main.route('/')
 def home():
-    return render_template('base.html')
+    return render_template('home.html')
 
 
 @main.route('/login', methods=['GET', 'POST'])

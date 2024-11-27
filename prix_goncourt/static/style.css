@@ -1,69 +1,95 @@
+/* Style général */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f0f4f8;
 }
 
-header {
-    background: #4CAF50;
+header, footer {
+    background-color: #007bff;
     color: white;
     padding: 10px 0;
     text-align: center;
 }
 
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
 nav ul {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
 }
 
 nav ul li {
     display: inline;
-    margin: 0 15px;
+    margin-right: 10px;
 }
 
-footer {
-    text-align: center;
-    padding: 10px;
-    background: #4CAF50;
+nav ul li a {
     color: white;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-.flashes {
-    color: red;
+nav ul li a:hover {
+    text-decoration: underline;
 }
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+
+main {
     padding: 20px;
-}
-
-h2 {
-    color: #333;
 }
 
 table {
     width: 100%;
+    margin: 20px auto;
     border-collapse: collapse;
-    margin: 20px 0;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 th, td {
-    padding: 8px;
+    padding: 12px;
     text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #007BFF;
+    background-color: #007bff;
     color: white;
 }
 
 tr:hover {
     background-color: #f1f1f1;
+}
+
+button, .button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px 0;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .button:hover {
+    background-color: #218838;
+}
+
+/* Styles pour messages flash */
+.flashes {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #ffcccb;
+    color: #333;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
 }

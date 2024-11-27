@@ -3,8 +3,6 @@
 {% block content %}
 <h2>Menu Jury</h2>
 <ul>
-    
-
     <li><a href="{{ url_for('main.get_books') }}">Afficher les livres</a></li>
     <li><a href="{{ url_for('main.vote', selection_number=1) }}">Voter pour la Sélection 1</a></li>
     <li><a href="{{ url_for('main.vote', selection_number=2) }}">Voter pour la Sélection 2</a></li>
@@ -12,6 +10,5 @@
     <li><a href="{{ url_for('main.vote', selection_number=4) }}">Voter pour la Sélection 4</a></li>
     <li><a href="{{ url_for('main.vote', selection_number=5) }}">Voter pour la Sélection 5</a></li>
     <li><a href="{{ url_for('main.logout') }}">Déconnexion</a></li>
-
 </ul>
 {% endblock %}

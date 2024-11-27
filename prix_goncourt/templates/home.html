@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Bienvenue sur le système de vote du Prix Goncourt</h2>
+    <p>Ce projet permet aux membres du jury et au président de sélectionner les livres gagnants à travers plusieurs phases de vote. Le processus est divisé en plusieurs étapes, chacune avec des règles spécifiques. Le président joue un rôle clé dans la gestion des sélections basées sur les résultats des votes.</p>
+    
+    <div class="roles">
+        <div class="role">
+            <h3>Rôle des membres du jury</h3>
+            <p>Les membres du jury peuvent se connecter, consulter les sélections de livres, et voter selon les phases définies. Le nombre de votes attribués à chaque phase est limité.</p>
+        </div>
+        <div class="role">
+            <h3>Rôle du président</h3>
+            <p>Le président gère l'ajout des livres aux sélections et choisit les livres qui passent d'une phase à l'autre, en se basant sur les résultats des votes des membres du jury.</p>
+        </div>
+    </div>
+
+    <h3>Phases du processus de sélection</h3>
+    <ul>
+        <li><strong>Phase 1:</strong> Liste initiale de livres, sélectionnés par le président.</li>
+        <li><strong>Phase 2:</strong> Les membres du jury votent pour un maximum de 4 livres.</li>
+        <li><strong>Phase 3:</strong> Les jurés votent pour 2 livres parmi les 8 sélectionnés.</li>
+        <li><strong>Phase 4:</strong> Les jurés votent pour un seul livre afin de déterminer le gagnant final.</li>
+    </ul>
+
+    <a href="{{ url_for('main.login') }}" class="button-primary">Se connecter pour commencer</a>
+</div>
+{% endblock %}
