@@ -87,7 +87,7 @@ def logout():
     session.pop('member_id', None)
     session.pop('role', None)
     flash('Vous êtes déconnecté.', 'success')
-    return redirect(url_for('main.login'))
+    return redirect(url_for('main.home'))
 
 
 @main.route('/result_vote', methods=['GET'])
@@ -139,7 +139,7 @@ def vote():
     selection_number = request.args.get('selection_number', default=1, type=int)
     book_dao = BookDAO()
 
-    # Si la méthode est POST, cela signifie que le jury a soumis son vote
+
     if request.method == 'POST':
         book_ids = request.form.getlist('book_ids')  # Liste des IDs des livres choisis
         if book_ids:

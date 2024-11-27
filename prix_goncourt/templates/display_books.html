@@ -40,5 +40,12 @@
     </tbody>
 </table>
 
-<a href="{{ url_for('main.home') }}">Retour au menu</a>
+<a href="{% if session['role'] == 'president' %}
+             {{ url_for('main.president_menu') }}
+         {% elif session['role'] == 'jury' %}
+             {{ url_for('main.jury_menu') }}
+         {% else %}
+             {{ url_for('main.home') }}
+         {% endif %}">Retour au menu</a>
+
 {% endblock %}
