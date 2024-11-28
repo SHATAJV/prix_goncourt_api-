@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, jsonify, request, abort
 from prix_goncourt.dao import BookDAO
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -6,8 +8,8 @@ from flask_swagger_ui import get_swaggerui_blueprint
 api = Blueprint('api', __name__)
 
 # Swagger setup
-SWAGGER_URL = '/api/docs'
-API_URL = 'swagger.yaml'
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.yaml'
 
 
 # Swagger UI initialization
@@ -19,7 +21,6 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     }
 )
 
-# DAO for book data interaction
 book_dao = BookDAO()
 
 
@@ -164,3 +165,37 @@ def add_to_selection(no_selection):
     except Exception as e:
         abort(500, description=str(e))
 
+
+@api.route('/api/selection/date/<date_str>', methods=['GET'])
+def get_selection_by_date(date_str):
+    """
+    Retrieve selections by date.
+
+    **Description:**
+    This route allows searching selections made on a specific date.
+
+    **Parameters:**
+    - `date_str` (str): A string representing the date in 'YYYY-MM-DD' format.
+
+    **Response:**
+    - 200: Success with the list of selections made on the specified date.
+    - 404: No selections found for the given date.
+    - 400: Invalid date format.
+    """
+    try:
+        # Validate the date format
+        try:
+            search_date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            abort(400, description="Invalid date format. Please use 'YYYY-MM-DD'.")
+
+        # Fetch selections for the specified date
+        selections = book_dao.get_selections_by_date(search_date)
+
+        if not selections:
+            abort(404, description="No selections found for the given date.")
+
+        return jsonify(selections), 200
+
+    except Exception as e:
+        abort(500, description=str(e))

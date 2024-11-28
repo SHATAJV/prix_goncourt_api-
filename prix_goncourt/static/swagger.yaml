@@ -82,3 +82,34 @@ paths:
           description: Details of the book
         '404':
           description: Book not found
+  /api/selection_by_date:
+    get:
+      summary: Récupérer les sélections par date
+      parameters:
+        - in: query
+          name: date_selection
+          required: true
+          schema:
+            type: string
+            format: date
+            description: La date de sélection au format 'YYYY-MM-DD'
+      responses:
+        '200':
+          description: Liste des sélections correspondant à la date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    selection_number:
+                      type: integer
+                    book_ids:
+                      type: array
+                      items:
+                        type: integer
+                    date_selection:
+                      type: string
+                      format: date
+  

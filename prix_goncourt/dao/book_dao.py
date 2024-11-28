@@ -1,3 +1,4 @@
+import datetime
 
 import pymysql
 import pymysql.cursors
@@ -10,16 +11,23 @@ class BookDAO:
     DAO class for managing books and votes.
     """
 
-    def add_books_to_selection(self, selection_number, book_ids):
+    import datetime
+
+    def add_books_to_selection(self, selection_number, book_ids, date_selection=None):
         """
-        Add books to a selection without jury ID.
+        Add books to a selection, optionally associating a specific date.
 
         Args:
             selection_number (int): The selection phase number.
             book_ids (list): A list of book IDs to add to the selection.
+            date_selection (datetime.date, optional): The date for the selection. Defaults to the current date if not provided.
         """
         connection = get_db_connection()
         cursor = connection.cursor()
+
+        # Use current date if no date is provided
+        if not date_selection:
+            date_selection = datetime.datetime.now().date()
 
         for book_id in book_ids:
             # Check if the book is already in the selection to avoid duplicates
@@ -28,13 +36,14 @@ class BookDAO:
             """
             cursor.execute(check_query, (selection_number, book_id))
             if cursor.fetchone() is None:
+                # Insert new book with the date_selection
                 insert_query = """
-                    INSERT INTO selections (selection_number, id_book)
-                    VALUES (%s, %s)
+                    INSERT INTO selections (selection_number, id_book, date_selection)
+                    VALUES (%s, %s, %s)
                 """
-                cursor.execute(insert_query, (selection_number, book_id))
+                cursor.execute(insert_query, (selection_number, book_id, date_selection))
                 connection.commit()
-                print(f"Book ID {book_id} added to selection {selection_number}.")
+                print(f"Book ID {book_id} added to selection {selection_number} on {date_selection}.")
             else:
                 print(f"Book ID {book_id} is already in selection {selection_number}.")
 
@@ -302,3 +311,26 @@ class BookDAO:
         result = cursor.fetchone()
         cursor.close()
         return result
+
+    def get_selections_by_date(self, search_date):
+        """
+        Fetch all selections for a specific date.
+
+        Args:
+            search_date (datetime.date): The date to search for.
+
+        Returns:
+            list: List of selections for the specified date.
+        """
+        connection = get_db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+        query = """
+            SELECT * FROM selections
+            WHERE date_selection = %s
+        """
+        cursor.execute(query, (search_date,))
+        selections = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return selections
