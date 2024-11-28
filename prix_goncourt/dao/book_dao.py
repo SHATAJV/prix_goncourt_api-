@@ -286,3 +286,19 @@ class BookDAO:
         cursor.close()
         connection.close()
         return juries
+
+    def get_book_by_slug(self, slug):
+        """
+        Fetches a book's details from the database using its slug.
+
+        :param slug_titre: The slug (unique identifier) of the book's title.
+        :return: A dictionary containing the book details or None if not found.
+        """
+
+        connection = get_db_connection()
+        query = "SELECT * FROM books WHERE slug = %s"
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        cursor.execute(query, (slug,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result

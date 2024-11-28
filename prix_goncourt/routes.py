@@ -44,11 +44,12 @@ def login():
             flash('Identifiants incorrects')
 
     return render_template('login.html')
+
+
 @main.route('/dashboard')
 def dashboard():
     if 'member_id' not in session:
         return redirect(url_for('main.login'))
-
 
     role = session.get('role')
     if role == 'jury':
@@ -69,10 +70,10 @@ def jury_menu():
 def president_menu():
     return render_template('president_menu.html')
 
+
 @main.route('/public_menu')
 def public_menu():
     return render_template('public_menu.html')
-
 
 
 @main.route('/display_books', methods=['GET'])
@@ -95,13 +96,10 @@ def result_vote():
     if 'role' not in session or session['role'] != 'president':
         return "Accès refusé", 403
 
-
     selection_number = request.args.get('selection_number', default=1, type=int)
-
 
     book_dao = BookDAO()
     vote_results = book_dao.get_vote_results_for_president(selection_number)
-
 
     return render_template('result_vote.html', vote_results=vote_results, selection_number=selection_number)
 
@@ -126,10 +124,10 @@ def add_books_to_selection():
         else:
             flash('Veuillez sélectionner une phase et au moins un livre.')
 
-
     all_books = book_dao.fetch_all_books()
 
     return render_template('add_selection.html', books=all_books)
+
 
 @main.route('/vote', methods=['GET', 'POST'])
 def vote():
@@ -139,16 +137,14 @@ def vote():
     selection_number = request.args.get('selection_number', default=1, type=int)
     book_dao = BookDAO()
 
-
     if request.method == 'POST':
-        book_ids = request.form.getlist('book_ids')  # Liste des IDs des livres choisis
+        book_ids = request.form.getlist('book_ids')
         if book_ids:
             # Appeler la méthode pour enregistrer les votes
             for book_id in book_ids:
-                book_dao.add_vote(selection_number, book_id, session['user_id'])  # Utiliser l'ID de l'utilisateur de session
+                book_dao.add_vote(selection_number, book_id, session['user_id'])
             flash('Vos votes ont été enregistrés avec succès.')
             return redirect(url_for('main.jury_menu'))
 
-    # Si la méthode est GET, afficher les livres de la sélection
     books = book_dao.get_books_by_selection(selection_number)
     return render_template('jury_vote.html', books=books, selection_number=selection_number)

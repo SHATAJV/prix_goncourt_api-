@@ -9,6 +9,7 @@ api = Blueprint('api', __name__)
 SWAGGER_URL = '/api/docs'
 API_URL = 'swagger.yaml'
 
+
 # Swagger UI initialization
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
@@ -21,6 +22,7 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 # DAO for book data interaction
 book_dao = BookDAO()
 
+
 @api.route('/api', methods=['GET'])
 def api_root():
     """
@@ -32,7 +34,8 @@ def api_root():
     **Response:**
     - 200: Success with a JSON welcome message.
     """
-    return jsonify({"message": "Welcome to the Prix Goncourt API"}), 200
+    return jsonify({"message": " Prix Goncourt API"}), 200
+
 
 @api.route('/api/books', methods=['GET'])
 def get_books():
@@ -51,6 +54,7 @@ def get_books():
         return jsonify(books), 200
     except Exception as e:
         abort(500, description=str(e))
+
 
 @api.route('/api/books/<int:id>', methods=['GET'])
 def get_book_by_id(id):
@@ -76,8 +80,9 @@ def get_book_by_id(id):
     except Exception as e:
         abort(500, description=str(e))
 
-@api.route('/api/books/<slug_titre>', methods=['GET'])
-def get_book_by_slug(slug_titre):
+
+@api.route('/api/books/<slug>', methods=['GET'])
+def get_book_by_slug(slug):
     """
     Retrieve a book by its slug title.
 
@@ -93,12 +98,14 @@ def get_book_by_slug(slug_titre):
     - 500: Internal server error if the operation fails.
     """
     try:
-        book = book_dao.get_book_by_slug(slug_titre)
+        book = book_dao.get_book_by_slug(slug)
+
         if not book:
             abort(404, description="Book not found")
         return jsonify(book), 200
     except Exception as e:
         abort(500, description=str(e))
+
 
 @api.route('/api/selection/<int:no_selection>', methods=['GET'])
 def get_selection(no_selection):
@@ -121,6 +128,7 @@ def get_selection(no_selection):
     except Exception as e:
         abort(500, description=str(e))
 
+
 @api.route('/api/selection/<int:no_selection>', methods=['POST'])
 def add_to_selection(no_selection):
     """
@@ -142,19 +150,17 @@ def add_to_selection(no_selection):
     try:
         data = request.get_json()
 
-        # Validate the request body
         if not data or "book_ids" not in data or not isinstance(data["book_ids"], list):
             abort(400, description="Invalid request, 'book_ids' is required as a list")
 
         book_ids = data["book_ids"]
 
-        # Ensure all book IDs are integers
         if not all(isinstance(book_id, int) for book_id in book_ids):
             abort(400, description="All book IDs must be integers")
 
-        # Add books to the selection
         book_dao.add_books_to_selection(no_selection, book_ids)
         return jsonify({"message": "Books successfully added", "selection": no_selection}), 201
 
     except Exception as e:
         abort(500, description=str(e))
+

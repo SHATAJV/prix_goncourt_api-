@@ -20,7 +20,6 @@ Entry Point:
 """
 
 
-
 from prix_goncourt import create_app
 from prix_goncourt.api import swaggerui_blueprint, SWAGGER_URL
 

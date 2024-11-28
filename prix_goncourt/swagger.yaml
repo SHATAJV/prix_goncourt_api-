@@ -68,3 +68,17 @@ paths:
       responses:
         '201':
           description: Livres ajoutés à la sélection
+  /api/books/{slug}:
+    get:
+      summary: Retrieve a book by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details of the book
+        '404':
+          description: Book not found
