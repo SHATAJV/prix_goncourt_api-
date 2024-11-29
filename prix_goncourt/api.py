@@ -1,18 +1,18 @@
 import datetime
 
-from flask import Blueprint, jsonify, request, abort
-from prix_goncourt.dao import BookDAO
+from flask import Blueprint, jsonify, request, abort, send_from_directory
 from flask_swagger_ui import get_swaggerui_blueprint
+
+from prix_goncourt.dao import BookDAO
+
 
 # Initialize the Blueprint
 api = Blueprint('api', __name__)
 
 # Swagger setup
-SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.yaml'
+SWAGGER_URL = '/api/ui'
+API_URL = '/swagger.yaml'
 
-
-# Swagger UI initialization
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
@@ -23,7 +23,12 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 
 book_dao = BookDAO()
 
-
+@api.route('/swagger.yaml', methods=['GET'])
+def swagger_spec():
+    """
+    Serves the swagger.yaml file.
+    """
+    return send_from_directory('.', 'swagger.yaml')
 @api.route('/api', methods=['GET'])
 def api_root():
     """
@@ -183,13 +188,12 @@ def get_selection_by_date(date_str):
     - 400: Invalid date format.
     """
     try:
-        # Validate the date format
+
         try:
             search_date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
         except ValueError:
             abort(400, description="Invalid date format. Please use 'YYYY-MM-DD'.")
 
-        # Fetch selections for the specified date
         selections = book_dao.get_selections_by_date(search_date)
 
         if not selections:

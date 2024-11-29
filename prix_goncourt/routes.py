@@ -22,12 +22,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-
         members_dao = MembersDAO()
 
-
         member = members_dao.get_member_by_name(username)
-
 
         if member and member['password'] == password:
 

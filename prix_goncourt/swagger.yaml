@@ -82,20 +82,24 @@ paths:
           description: Details of the book
         '404':
           description: Book not found
-  /api/selection_by_date:
+
+
+  /api/selection/date/{date_str}:
     get:
-      summary: Récupérer les sélections par date
+      summary: Retrieve selections by date
+      description: |
+        This route allows searching selections made on a specific date.
       parameters:
-        - in: query
-          name: date_selection
+        - name: date_str
+          in: path
           required: true
+          description: A string representing the date in 'YYYY-MM-DD' format.
           schema:
             type: string
             format: date
-            description: La date de sélection au format 'YYYY-MM-DD'
       responses:
         '200':
-          description: Liste des sélections correspondant à la date
+          description: Success
           content:
             application/json:
               schema:
@@ -103,13 +107,15 @@ paths:
                 items:
                   type: object
                   properties:
-                    selection_number:
+                    selection_id:
                       type: integer
                     book_ids:
                       type: array
                       items:
                         type: integer
-                    date_selection:
-                      type: string
-                      format: date
-  
+        '400':
+          description: Invalid date format
+        '404':
+          description: No selections found for the given date
+        '500':
+          description: Internal server error
