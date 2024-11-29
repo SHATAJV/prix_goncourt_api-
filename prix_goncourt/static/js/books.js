@@ -34,7 +34,7 @@ $(document).ready(function() {
     $('#load-books-by-date').click(function() {
     let date = $('#selection-date').val();
 
-   
+
     if (!date) {
         alert('Veuillez choisir une date de sélection.');
         return;

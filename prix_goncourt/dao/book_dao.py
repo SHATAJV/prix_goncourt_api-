@@ -314,23 +314,27 @@ class BookDAO:
 
     def get_selections_by_date(self, search_date):
         """
-        Fetch all selections for a specific date.
+        Fetch all selections for a specific date, including book details (title and author).
 
         Args:
             search_date (datetime.date): The date to search for.
 
         Returns:
-            list: List of selections for the specified date.
+            list: List of selections with book details for the specified date.
         """
         connection = get_db_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
 
         query = """
-            SELECT * FROM selections
-            WHERE date_selection = %s
+           SELECT s.id_selection, s.date_selection, b.id_book, b.title, a.name AS author
+        FROM selections s
+        JOIN books b ON s.id_book = b.id_book
+        JOIN authors a ON b.id_author = a.id_author
+        WHERE s.date_selection = %s
         """
         cursor.execute(query, (search_date,))
         selections = cursor.fetchall()
         cursor.close()
         connection.close()
         return selections
+
