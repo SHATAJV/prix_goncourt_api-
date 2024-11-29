@@ -4,48 +4,21 @@
 <h2>Liste des Livres Disponibles</h2>
 
 
-<form action="{{ url_for('main.get_books') }}" method="get">
-    <label for="selection_number">Choisir le numéro de sélection :</label>
-    <select id="selection_number" name="selection">
+<div>
+    <label for="selection-date">Choisir la date de sélection :</label>
+     <input type="date" id="selection-date" name="selection-date">
+    <button id="load-books-by-date">Afficher les Livres par Date</button>
 
-        <option value="2" {% if selection_number == 2 %}selected{% endif %}>2</option>
-        <option value="3" {% if selection_number == 3 %}selected{% endif %}>3</option>
-        <option value="4" {% if selection_number == 4 %}selected{% endif %}>4</option>
-         <option value="4" {% if selection_number == 5 %}selected{% endif %}>5</option>
-
-    </select>
-    <button type="submit">Afficher les livres</button>
-</form>
+</div>
 
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Titre</th>
-            <th>Auteur</th>
+<div id="book-list">
+    <button id="load-books">List de les Livres complete </button>
+    <div id="books">
+
+    </div>
+</div>
 
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for book in books %}
-            <tr>
-                <td>{{ book.id_book }}</td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<a href="{% if session['role'] == 'president' %}
-             {{ url_for('main.president_menu') }}
-         {% elif session['role'] == 'jury' %}
-             {{ url_for('main.jury_menu') }}
-         {% else %}
-             {{ url_for('main.home') }}
-         {% endif %}">Retour au menu</a>
-
+<script src="{{ url_for('static', filename='js/books.js') }}"></script>
 {% endblock %}
